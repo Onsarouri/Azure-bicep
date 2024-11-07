@@ -13,6 +13,9 @@ param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-hellowo
 @description('Specifies the container Port')
 param targetPort int = 80
 
+@description('Specifies the name of the container app')
+param containerAppName string = 'mycontainerapp'
+
 @description('Number of CPU cores the container can use, with a max of two decimals')
 @allowed([
   '0.5'
@@ -71,8 +74,7 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' 
   }
 }
 
-@description('Specifies the name of the container app')
-param containerAppName string = 'mycontainerapp'
+
 
 resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: containerAppName
@@ -93,7 +95,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
       }
     }
     template: {
-      revisionSuffix: 'firstRevision'
+      revisionSuffix: 'firstrev'
       containers: [
         {
           name: containerAppName
