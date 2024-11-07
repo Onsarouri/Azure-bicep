@@ -1,4 +1,4 @@
-@description('Specifies the name of the container app env')
+@description('Specifies the name of the container app environment')
 param containerAppEnvName string = 'env-${uniqueString(resourceGroup().id)}'
 
 @description('Specifies the name of the log analytics workspace')
@@ -13,16 +13,15 @@ param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-hellowo
 @description('Specifies the container Port')
 param targetPort int = 80
 
-@description('Number of CPU cores the container can use, it can be with a max of two dicimals')
+@description('Number of CPU cores the container can use, with a max of two decimals')
 @allowed([
   '0.5'
   '1'
   '2'
-]
-)
+])
 param cpuCores string = '0.5'
 
-@description('amount of memory in GB allocated to the containerup to 4GB, it can be with a max of two dicimals')
+@description('Amount of memory in GB allocated to the container, up to 4GB, with max of two decimals')
 @allowed([
   '0.5'
   '1'
@@ -32,8 +31,7 @@ param cpuCores string = '0.5'
   '3'
   '3.5'
   '4'
-]
-)
+])
 param memorySize string = '1'
 
 @description('Min number of replicas that will be deployed')
@@ -46,8 +44,8 @@ param minReplicas int = 1
 @maxValue(25)
 param maxReplicas int = 3
 
-resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01'= {
-  name: containerApplogAnalyticsName
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: logAnalyticsName
   location: location
   properties: {
     sku: {
@@ -56,7 +54,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01'= {
   }
 }
 
-resource container AppEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' = {
+resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' = {
   name: containerAppEnvName
   location: location
   sku: {
@@ -73,6 +71,8 @@ resource container AppEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview'
   }
 }
 
+@description('Specifies the name of the container app')
+param containerAppName string = 'myContainerApp'
 
 resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: containerAppName
@@ -81,17 +81,17 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
     managedEnvironmentId: containerAppEnv.id
     configuration: {
       ingress: {
-          external: true
-          targetPort: targetPort
-          allowInsecure: false
-          traffic:[
-            {
-              latestRevision: true
-              weight: 100
-            }
-          ]
-        }
+        external: true
+        targetPort: targetPort
+        allowInsecure: false
+        traffic: [
+          {
+            latestRevision: true
+            weight: 100
+          }
+        ]
       }
+    }
     template: {
       revisionSuffix: 'firstRevision'
       containers: [
@@ -99,9 +99,8 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
           name: containerAppName
           image: containerImage
           resources: {
-              cpu: json(cpuCores)
-              memory: '${memorySize}GB'
-            
+            cpu: json(cpuCores)
+            memory: '${memorySize}GB'
           }
         }
       ]
@@ -110,8 +109,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
         maxReplicas: maxReplicas
       }
     }
-    }
   }
-  
-  output containerAppFQDN string = containerApp.properties.configuration.ingress.fqdn
-  
+}
+
+output containerAppFQDN string = containerApp.properties.configuration.ingress.fqdn
