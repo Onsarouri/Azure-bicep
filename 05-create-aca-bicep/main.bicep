@@ -72,7 +72,7 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' 
 }
 
 @description('Specifies the name of the container app')
-param containerAppName string = 'myContainerApp'
+param containerAppName string = 'mycontainerapp'
 
 resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: containerAppName
