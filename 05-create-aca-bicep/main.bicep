@@ -102,7 +102,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
           image: containerImage
           resources: {
             cpu: json(cpuCores)
-            memory: '${memorySize}GB'
+            memory: '${memorySize}Gi'
           }
         }
       ]
